@@ -34,6 +34,7 @@ class KnobButton extends HookWidget {
 
     return SizedBox(
       width: size,
+      height: size,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final w = constraints.maxWidth;
