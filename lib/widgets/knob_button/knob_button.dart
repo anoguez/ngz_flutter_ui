@@ -17,6 +17,7 @@ class KnobButton extends HookWidget {
     required this.unit,
     required this.onChanged,
     this.child,
+    this.size = 100,
   });
 
   final double value;
@@ -25,14 +26,14 @@ class KnobButton extends HookWidget {
   final double step;
   final String unit;
   final ValueChanged<double> onChanged;
+  final double? size;
 
   @override
   Widget build(BuildContext context) {
     final value = useState(50.0);
 
     return SizedBox(
-      width: 250,
-      height: 250,
+      width: size,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final w = constraints.maxWidth;
