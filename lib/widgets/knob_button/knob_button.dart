@@ -17,7 +17,8 @@ class KnobButton extends HookWidget {
     required this.unit,
     required this.onChanged,
     this.child,
-    this.size = 100,
+    this.size = 70,
+    this.dialColors,
   });
 
   final double value;
@@ -27,6 +28,7 @@ class KnobButton extends HookWidget {
   final String unit;
   final ValueChanged<double> onChanged;
   final double? size;
+  final List<Color>? dialColors;
 
   @override
   Widget build(BuildContext context) {
@@ -61,19 +63,10 @@ class KnobButton extends HookWidget {
             },
             child: CustomPaint(
               painter: KnobPainter(
-                value.value,
-                min,
-                max,
-                step,
-                unit,
-                minAngle,
-                maxAngle,
-                infiniteLoop: false,
-              ),
-              child: Container(
-                child: Center(
-                  child: child,
-                ),
+                  value.value, min, max, step, unit, minAngle, maxAngle,
+                  infiniteLoop: false, dialColors: dialColors),
+              child: Center(
+                child: child,
               ),
             ),
           );

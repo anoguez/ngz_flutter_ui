@@ -13,6 +13,7 @@ class KnobPainter extends CustomPainter {
   final double minAngle;
   final double maxAngle;
   final bool infiniteLoop;
+  final List<Color>? dialColors;
 
   double thickness = 25;
 
@@ -50,6 +51,7 @@ class KnobPainter extends CustomPainter {
     this.minAngle,
     this.maxAngle, {
     this.infiniteLoop = false,
+    this.dialColors,
   });
 
   @override
@@ -71,7 +73,7 @@ class KnobPainter extends CustomPainter {
     final c = Offset(size.width / 2.0, size.height / 2.0);
     final rect =
         Rect.fromCenter(center: c, width: size.width, height: size.height);
-    final r = size.width / 2.0; // dial radius
+    final r = size.width / 3.0; // dial radius
 
     drawDial(canvas, rect, r);
     drawMinMaxGuides(canvas, c, r);
@@ -79,7 +81,7 @@ class KnobPainter extends CustomPainter {
 
     final r1 = r - thickness / 2.0;
     drawKnob(canvas, rect, r1);
-    final rect1 = rect.deflate(thickness * 0.75);
+    final rect1 = rect.deflate(thickness * 2.55);
     drawKnobEffects(canvas, rect1);
     drawIndicators(canvas, rect1, r);
   }
@@ -87,8 +89,18 @@ class KnobPainter extends CustomPainter {
   void drawDial(Canvas canvas, Rect rect, double r) {
     final dialPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = thickness
-      ..shader = LinearGradient(
+      ..strokeWidth = thickness;
+
+    if ((dialColors ?? []).length > 1) {
+      dialPaint.shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: dialColors!,
+      ).createShader(rect);
+    } else if ((dialColors ?? []).length == 1) {
+      dialPaint.color = dialColors!.elementAt(0);
+    } else {
+      dialPaint.shader = LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
@@ -96,6 +108,7 @@ class KnobPainter extends CustomPainter {
           $styles.colors.dialColorDark,
         ],
       ).createShader(rect);
+    }
 
     canvas.drawCircle(rect.center, r, dialPaint);
 
@@ -141,7 +154,7 @@ class KnobPainter extends CustomPainter {
       var d = r - 0;
 
       if (i % 10 == 0) {
-        d = r - 1.0;
+        d = r - 0.5;
       } else if (i % 5 == 0) {
         d = r - 2.0;
       } else {
@@ -208,7 +221,7 @@ class KnobPainter extends CustomPainter {
     final angleR = minAngleR + anglesPerUnit * (value - min);
 
     // draw dot
-    final r1 = r - 20.0;
+    final r1 = r - 25.0;
     final d = Offset(r1 * cos(angleR), r1 * sin(angleR));
     canvas.drawCircle(
       rect.center + d,
