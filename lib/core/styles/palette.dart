@@ -20,4 +20,10 @@ class Palette {
   final Color dialColorLight = const Color(0xFF262626);
   final Color knobColorDark = const Color(0xFF131313);
   final Color knobColorLight = const Color(0xFF272727);
+
+  //
+  final Color greyStrong = const Color(0xFF272625);
+  final Color greyMedium = const Color(0xFF9D9995);
+  final Color marker = Color(0xFFE4935D);
+  final Color marker2 = Color(0xFFBEABA1);
 }

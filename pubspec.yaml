@@ -1,7 +1,7 @@
 name: ngz_flutter_ui
 description: "A new Flutter package project."
 version: 0.0.1
-homepage:
+# homepage:
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -10,7 +10,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   flutter_hooks: ^0.20.5
+  flutter_animate: ^4.5.0
+  google_fonts: ^6.1.0
+  gap: ^3.0.1
+  equatable: ^2.0.5
+  flextras: ^1.0.0
+  collection: ^1.17.0
 
 dev_dependencies:
   flutter_test:
@@ -20,3 +27,6 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
+  assets:
+    - assets/fonts/Fira_Sans/
+    - assets/fonts/Oxygen/
