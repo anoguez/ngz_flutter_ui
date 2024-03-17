@@ -2,7 +2,7 @@ part of '../timeline.dart';
 
 class _EventPopups extends StatefulWidget {
   const _EventPopups({super.key, required this.currentEvent});
-  final TimelineEvent? currentEvent;
+  final TimelineItemData? currentEvent;
 
   @override
   State<_EventPopups> createState() => _EventPopupsState();
@@ -10,7 +10,7 @@ class _EventPopups extends StatefulWidget {
 
 class _EventPopupsState extends State<_EventPopups> {
   final _debouncer = Debouncer(500.ms);
-  TimelineEvent? _eventToShow;
+  TimelineItemData? _eventToShow;
 
   @override
   void dispose() {
@@ -48,15 +48,15 @@ class _EventPopupsState extends State<_EventPopups> {
                       effects: const [
                         SlideEffect(begin: Offset(0, -.1)),
                       ],
-                      key: ValueKey(_eventToShow?.year),
+                      key: ValueKey(_eventToShow?.startYear),
                       child: IntrinsicHeight(
                         child: SizedBox(
                           width: $styles.sizes.maxContentWidth3,
                           child: Padding(
                             padding: EdgeInsets.all($styles.insets.md),
                             child: TimelineEventCard(
-                              text: evt.description,
-                              year: evt.year,
+                              text: evt.title,
+                              year: evt.startYear,
                             ),
                           ),
                         ),

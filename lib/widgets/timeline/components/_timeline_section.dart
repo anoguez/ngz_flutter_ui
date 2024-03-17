@@ -10,21 +10,21 @@ class TimelineSection extends StatelessWidget {
 
   final TimelineItemData data;
   final int selectedYr;
-  final ItemType? selectedItem;
+  final TimelineItemData? selectedItem;
 
   @override
   Widget build(BuildContext context) {
-    bool isSelected = selectedItem == data.type;
+    bool isSelected = selectedItem == data;
     // get a fraction from 0 - 1 based on selected yr and start/end yr of the item
     // 500, 250, 750
-    int startYr = data.startYr, endYr = data.endYr;
+    int startYr = data.startYear, endYr = data.endYear;
     double fraction = (selectedYr - startYr) / (endYr - startYr);
     fraction = fraction.clamp(0, 1);
 
     return Semantics(
       label: '${data.title}, ${StringUtils.timelineSemanticDate(
-        StringUtils.formatYr(data.startYr),
-        StringUtils.formatYr(data.endYr),
+        data.startYear,
+        data.endYear,
       )}',
       child: IgnorePointer(
         ignoringSemantics: false,

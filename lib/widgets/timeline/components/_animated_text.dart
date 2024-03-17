@@ -1,12 +1,12 @@
 part of '../timeline.dart';
 
-class _AnimatedEraText extends StatelessWidget {
-  const _AnimatedEraText(this.year);
-  final int year;
+class _AnimatedText extends StatelessWidget {
+  const _AnimatedText(this.item);
+  final TimelineItemData? item;
 
   @override
   Widget build(BuildContext context) {
-    String era = StringUtils.getEra(year);
+    String era = item != null ? StringUtils.getExtendedTitle(item!) : '';
     final style = $styles.text.body.copyWith(color: $styles.colors.offWhite);
     return Semantics(
       liveRegion: true,

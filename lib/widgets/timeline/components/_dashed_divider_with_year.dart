@@ -26,15 +26,6 @@ class _DashedDividerWithYear extends StatelessWidget {
                         shadows: $styles.shadows.text),
                   ),
                   Gap($styles.insets.xs),
-                  // TODO
-                  // Text(
-                  //   StringUtils.getYrSuffix(roundedYr),
-                  //   style: $styles.text.body.copyWith(
-                  //     color: Colors.white,
-                  //     shadows: $styles.shadows.textStrong,
-                  //   ),
-                  // ),
-                  // Gap($styles.insets.xs),
                 ],
               ),
             ),

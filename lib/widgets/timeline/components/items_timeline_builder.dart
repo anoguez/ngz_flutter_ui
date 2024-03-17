@@ -19,10 +19,12 @@ class ItemsTimelineBuilder extends StatelessWidget {
     this.axis = Axis.horizontal,
     this.crossAxisGap,
     this.minSize = 10,
+    this.selectedItem,
   });
 
-  final List<ItemType> selectedItems; // TODO remove ?
+  final List<TimelineItemData> selectedItems; // TODO remove ?
   final List<TimelineItemData> items;
+  final TimelineItemData? selectedItem;
 
   final Widget Function(BuildContext, TimelineItemData type, bool isSelected)?
       timelineBuilder;
@@ -49,14 +51,17 @@ class ItemsTimelineBuilder extends StatelessWidget {
     return LayoutBuilder(builder: (_, constraints) {
       /// Builds one timeline track, may contain multiple items, but they should not overlap
       Widget buildSingleTimelineTrack(
-          BuildContext context, List<ItemType> types) {
+        BuildContext context,
+        // List<ItemLine> itemLines,
+        List<TimelineItemData> itemLines,
+      ) {
         return Stack(
           clipBehavior: Clip.none,
-          children: types.map(
+          children: itemLines.map(
             (t) {
-              final data = items.firstWhereOrNull((item) => item.type == t);
+              final data = items.firstWhereOrNull((item) => item == t);
               if (data == null) {
-                throw ('Could not find data for item type $t');
+                return SizedBox();
               }
 
               var (minYear, maxYear) = items.findMinMax;
@@ -66,8 +71,8 @@ class ItemsTimelineBuilder extends StatelessWidget {
               double pxToYrRatio = totalYrs /
                   ((isHz ? constraints.maxWidth : constraints.maxHeight));
               // Now we just need to calculate year spans, and then convert them to pixels for the start/end position in the Stack
-              int itemYrs = data.endYr - data.startYr;
-              int yrsFromStart = data.startYr - items.minYear;
+              int itemYrs = data.endYear - data.startYear;
+              int yrsFromStart = data.startYear - items.minYear;
               double startPx = yrsFromStart / pxToYrRatio;
               double sizePx = itemYrs / pxToYrRatio;
               if (sizePx < minSize) {
@@ -75,7 +80,7 @@ class ItemsTimelineBuilder extends StatelessWidget {
                 sizePx = minSize;
                 startPx -= yearDelta;
               }
-              final isSelected = selectedItems.contains(data.type);
+              final isSelected = selectedItems.contains(data);
               final child = timelineBuilder?.call(context, data, isSelected) ??
                   _DefaultTrackEntry(isSelected: isSelected);
               return isHz
@@ -97,28 +102,21 @@ class ItemsTimelineBuilder extends StatelessWidget {
         );
       }
 
-      // TODO
       return wrapFlex([
         // Track 1
         buildSingleTimelineTrack(
           context,
-          [
-            ItemType.chichenItza,
-          ],
+          items.where((item) => item.line == ItemLine.first).toList(),
         ),
         // Track 2
         buildSingleTimelineTrack(
           context,
-          [
-            ItemType.christRedeemer,
-          ],
+          items.where((item) => item.line == ItemLine.second).toList(),
         ),
         // Track 3
         buildSingleTimelineTrack(
           context,
-          [
-            ItemType.tajMahal,
-          ],
+          items.where((item) => item.line == ItemLine.third).toList(),
         ),
       ]);
     });

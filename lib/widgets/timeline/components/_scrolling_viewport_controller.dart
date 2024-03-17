@@ -24,13 +24,9 @@ class _ScrollingViewportController extends ChangeNotifier {
   void init() {
     scheduleMicrotask(() {
       setZoom(.1);
-      final w = widget.selectedItem;
-      if (w != null) {
-        final data = items.firstWhereOrNull((item) => item.type == w);
-        if (data == null) {
-          throw ('Could not find data for item type $w');
-        }
-        final pos = calculateScrollPosFromYear(data.startYr);
+      final data = widget.selectedItem;
+      if (data != null) {
+        final pos = calculateScrollPosFromYear(data.startYear);
         scroller.jumpTo(pos - 200);
         scroller.animateTo(
           pos,

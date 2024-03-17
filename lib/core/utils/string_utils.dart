@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart' hide TextDirection;
+import 'package:ngz_flutter_ui/widgets/timeline/data/timeline_item_data.dart';
 
 class StringUtils {
   static bool isEmpty(String? s) {
@@ -25,10 +27,10 @@ class StringUtils {
   static Size measure(String text, TextStyle style,
       {int maxLines = 1, TextDirection direction = TextDirection.ltr}) {
     final TextPainter textPainter = TextPainter(
-        text: TextSpan(text: text, style: style),
-        maxLines: maxLines,
-        textDirection: direction)
-      ..layout(minWidth: 0, maxWidth: double.infinity);
+      text: TextSpan(text: text, style: style),
+      maxLines: maxLines,
+      textDirection: direction,
+    )..layout(minWidth: 0, maxWidth: double.infinity);
     return textPainter.size;
   }
 
@@ -57,14 +59,6 @@ class StringUtils {
 
   static String getYrSuffix(int yr) => yr < 0 ? yearBCE : yearCE;
 
-  // TODO
-  static String getEra(int yr) {
-    if (yr <= -600) return eraPrehistory;
-    if (yr <= 476) return eraClassical;
-    if (yr <= 1450) return eraEarlyModern;
-    return eraModern;
-  }
-
   static String capitalize(String value) {
     return '${value[0].toUpperCase()}${value.substring(1).toLowerCase()}';
   }
@@ -87,15 +81,16 @@ class StringUtils {
     return '$fromDate to $endDate';
   }
 
-  static String timelineLabelConstruction(Object title) {
-    return 'Construction of $title begins.';
+  static String getExtendedTitle(TimelineItemData item) {
+    return 'From ${formatDateToString(item.startDate)}';
+  }
+
+  static String formatDateToString(DateTime date) {
+    DateFormat format = DateFormat.yMMMd();
+    return format.format(date);
   }
 
   // TODO
   static String get yearBCE => 'BCE';
   static String get yearCE => 'CE';
-  static String get eraPrehistory => 'Prehistory';
-  static String get eraClassical => 'Classical Era';
-  static String get eraEarlyModern => 'Early Modern Era';
-  static String get eraModern => 'Modern Era';
 }

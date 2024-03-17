@@ -7,15 +7,15 @@ extension CollectionExtension on List<TimelineItemData> {
       throw ArgumentError('List must not be empty');
     }
 
-    int minYear = first.startYr;
-    int maxYear = first.endYr;
+    int minYear = first.startYear;
+    int maxYear = first.endYear;
 
     for (var item in this) {
-      if (item.startYr < minYear) {
-        minYear = item.startYr;
+      if (item.startYear < minYear) {
+        minYear = item.startYear;
       }
-      if (item.endYr > maxYear) {
-        maxYear = item.endYr;
+      if (item.endYear > maxYear) {
+        maxYear = item.endYear;
       }
     }
 
@@ -23,8 +23,8 @@ extension CollectionExtension on List<TimelineItemData> {
   }
 
   int get minYear => reduce((currentMin, item) =>
-      item.startYr < currentMin.startYr ? item : currentMin).startYr;
+      item.startYear < currentMin.startYear ? item : currentMin).startYear;
 
   int get maxYear => reduce((currentMax, item) =>
-      item.endYr > currentMax.endYr ? item : currentMax).endYr;
+      item.endYear > currentMax.endYear ? item : currentMax).endYear;
 }

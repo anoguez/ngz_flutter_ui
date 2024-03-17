@@ -11,8 +11,8 @@ class _EventMarkers extends StatefulWidget {
     required this.items,
   });
 
-  final void Function(TimelineEvent? event) onEventChanged;
-  final void Function(TimelineEvent event) onMarkerPressed;
+  final void Function(TimelineItemData? event) onEventChanged;
+  final void Function(TimelineItemData event) onMarkerPressed;
   final int selectedYr;
   final List<TimelineItemData> items;
 
@@ -28,7 +28,7 @@ class _EventMarkersState extends State<_EventMarkers> {
 
   late final int _totalYrs = endYr - startYr;
 
-  TimelineEvent? selectedEvent;
+  TimelineItemData? selectedEvent;
 
   /// Normalizes a given year to a value from 0 - 1, based on start and end yr.
   double _calculateOffsetY(int yr) => (yr - startYr) / _totalYrs;
@@ -37,16 +37,15 @@ class _EventMarkersState extends State<_EventMarkers> {
   /// one of them should be selected  (as oppose to year-based proximity).
   /// This ensures consistent UX at different zoom levels.
   void _updateSelectedEvent(double maxPxHeight) {
-    final allEvents =
-        TimelineConstants.getAllTimelineEvents(widget.items); // TODO
+    final allEvents = widget.items; // TODO
     const double minDistance = 10;
-    TimelineEvent? closestEvent;
+    TimelineItemData? closestEvent;
     double closestDistance = double.infinity;
     // Convert current yr to a px position
     double currentYearPx = _calculateOffsetY(widget.selectedYr) * maxPxHeight;
     for (var e in allEvents) {
       // Convert both the event.yr to px, and compare with currentYearPx
-      double eventPx = _calculateOffsetY(e.year) * maxPxHeight;
+      double eventPx = _calculateOffsetY(e.startYear) * maxPxHeight;
       double d = (eventPx - currentYearPx).abs();
       // Keep the closest event that is within minDistance
       if (d <= minDistance && d < closestDistance) {
@@ -63,8 +62,7 @@ class _EventMarkersState extends State<_EventMarkers> {
 
   @override
   Widget build(BuildContext context) {
-    final allEvents =
-        TimelineConstants.getAllTimelineEvents(widget.items); // TODO
+    final allEvents = widget.items;
     return IgnorePointer(
       ignoringSemantics: false,
       child: LayoutBuilder(builder: (_, constraints) {
@@ -73,7 +71,7 @@ class _EventMarkersState extends State<_EventMarkers> {
 
         /// Create a marker for each event
         List<Widget> markers = allEvents.map((event) {
-          double offsetY = _calculateOffsetY(event.year);
+          double offsetY = _calculateOffsetY(event.startYear);
           return _EventMarker(
             offsetY,
             event: event,
@@ -132,9 +130,9 @@ class _EventMarker extends StatelessWidget {
     required this.onPressed,
   });
   final double offset;
-  final TimelineEvent event;
+  final TimelineItemData event;
   final bool isSelected;
-  final void Function(TimelineEvent event) onPressed;
+  final void Function(TimelineItemData event) onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +145,7 @@ class _EventMarker extends StatelessWidget {
         child: OverflowBox(
           maxHeight: 30,
           child: AppBtn.basic(
-            semanticLabel: '${event.year}: ${event.description}',
+            semanticLabel: '${event.startYear}: ${event.title}',
             onPressed: () => onPressed(event),
             child: Container(
               alignment: Alignment.center,

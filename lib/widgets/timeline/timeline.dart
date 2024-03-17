@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -20,7 +19,6 @@ import 'package:ngz_flutter_ui/widgets/centered_box.dart';
 import 'package:ngz_flutter_ui/widgets/dashed_line.dart';
 import 'package:ngz_flutter_ui/widgets/list_gradient.dart';
 import 'package:ngz_flutter_ui/widgets/timeline/components/items_timeline_builder.dart';
-import 'package:ngz_flutter_ui/widgets/timeline/data/timeline_data.dart';
 import 'package:ngz_flutter_ui/widgets/timeline/data/timeline_item_data.dart';
 import 'package:ngz_flutter_ui/widgets/timeline/timeline_event_card.dart';
 
@@ -29,15 +27,13 @@ part 'components/_dashed_divider_with_year.dart';
 part 'components/_timeline_section.dart';
 part 'components/_year_markers.dart';
 part 'components/_event_markers.dart';
-part 'components/_animated_era_text.dart';
+part 'components/_animated_text.dart';
 part 'components/_event_popups.dart';
 
-// TODO
-enum ItemType {
-  chichenItza,
-  christRedeemer,
-  pyramidsGiza,
-  tajMahal,
+enum ItemLine {
+  first,
+  second,
+  third,
 }
 
 class Timeline extends HookWidget {
@@ -48,8 +44,6 @@ class Timeline extends HookWidget {
     this.height,
   });
 
-  // static const double _minTimelineSize = 100;
-  // final _currentEventMarker = ValueNotifier<TimelineEvent?>(null);
   final List<TimelineItemData> items;
   final double? width;
   final double? height;
@@ -58,9 +52,15 @@ class Timeline extends HookWidget {
   Widget build(BuildContext context) {
     final scroller = useScrollController();
     final year = useState(0);
+    final currentItem = useState<TimelineItemData?>(null);
 
     final handleViewportYearChanged = useCallback((int value) {
       year.value = value;
+    }, []);
+
+    final handleItemChanged = useCallback((TimelineItemData? value) {
+      if (value == null) return;
+      currentItem.value = value;
     }, []);
 
     /// Vertically scrolling timeline, manages a ScrollController.
@@ -84,15 +84,17 @@ class Timeline extends HookWidget {
                     scroller: scroller,
                     minSize: minSize,
                     maxSize: maxSize,
-                    selectedItem: ItemType.chichenItza, // TODO
+                    selectedItem: currentItem.value,
                     onYearChanged: handleViewportYearChanged,
+                    onItemChanged: handleItemChanged,
                   ),
                 ),
 
                 /// Era Text (classical, modern etc)
                 ValueListenableBuilder<int>(
                   valueListenable: year,
-                  builder: (_, value, __) => _AnimatedEraText(value), // TODO
+                  builder: (_, value, __) =>
+                      _AnimatedText(currentItem.value), // TODO
                 ),
                 Gap($styles.insets.xs),
               ],
@@ -114,14 +116,16 @@ class _ScrollingViewport extends StatefulWidget {
     required this.maxSize,
     required this.selectedItem,
     this.onYearChanged,
+    required this.onItemChanged,
     required this.items,
   });
   final double minSize;
   final double maxSize;
   final ScrollController scroller;
-  final ItemType? selectedItem;
+  final TimelineItemData? selectedItem;
   final List<TimelineItemData> items;
   final void Function(int year)? onYearChanged;
+  final void Function(TimelineItemData? timelineItem) onItemChanged;
   final void Function(_ScrollingViewportController controller)? onInit;
 
   @override
@@ -135,7 +139,7 @@ class _ScalingViewportState extends State<_ScrollingViewport> {
     items: widget.items,
   );
   static const double _minTimelineSize = 100;
-  final _currentEventMarker = ValueNotifier<TimelineEvent?>(null);
+  final _currentEventMarker = ValueNotifier<TimelineItemData?>(null);
   Size? _prevSize;
 
   @override
@@ -151,8 +155,9 @@ class _ScalingViewportState extends State<_ScrollingViewport> {
     super.dispose();
   }
 
-  void _handleEventMarkerChanged(TimelineEvent? event) {
-    _currentEventMarker.value = event;
+  void _handleEventMarkerChanged(TimelineItemData? event) {
+    _currentEventMarker.value = event; // TODO check later
+    widget.onItemChanged(event);
     AppHaptics.selectionClick();
   }
 
@@ -248,6 +253,7 @@ class _ScalingViewportState extends State<_ScrollingViewport> {
                         //child: Placeholder(),
                         child: ItemsTimelineBuilder(
                           items: widget.items,
+                          selectedItem: widget.selectedItem,
                           axis: Axis.vertical,
                           crossAxisGap: max(6, (width - (120 * 3)) / 2),
                           minSize: _minTimelineSize,
@@ -280,7 +286,7 @@ class _ScalingViewportState extends State<_ScrollingViewport> {
             ),
 
             /// Event Popups, rebuilds when [_currentEventMarker] changes
-            ValueListenableBuilder<TimelineEvent?>(
+            ValueListenableBuilder<TimelineItemData?>(
               valueListenable: _currentEventMarker,
               builder: (_, data, __) {
                 return _EventPopups(currentEvent: data);
