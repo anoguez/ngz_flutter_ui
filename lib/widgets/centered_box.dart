@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 
 class CenteredBox extends StatelessWidget {
-  const CenteredBox(
-      {super.key, required this.child, this.width, this.height, this.padding});
+  const CenteredBox({
+    super.key,
+    required this.child,
+    this.width,
+    this.height,
+    this.padding,
+  });
   final Widget child;
   final double? width;
   final double? height;
